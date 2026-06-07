@@ -1,0 +1,20 @@
+meta {
+  name: logout
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/api/auth/logout
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: {{authorizationHeader}}
+}
+
+script:post-response {
+  bru.setEnvVar("sessionId", "", { persist: true });
+  bru.setEnvVar("authorizationHeader", "", { persist: true });
+}

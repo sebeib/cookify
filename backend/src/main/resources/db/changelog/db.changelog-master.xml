@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+    <changeSet id="1-create-role-user-invite-and-session" author="codex">
+        <createTable tableName="role">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_account">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="text">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="invite">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="role_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="session">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="user_account"
+                baseColumnNames="role_id"
+                constraintName="fk_user_account_role_id"
+                referencedTableName="role"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="invite"
+                baseColumnNames="role_id"
+                constraintName="fk_invite_role_id"
+                referencedTableName="role"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="session"
+                baseColumnNames="user_id"
+                constraintName="fk_session_user_id"
+                referencedTableName="user_account"
+                referencedColumnNames="id"/>
+
+        <insert tableName="role">
+            <column name="id" value="c0a8012e-8b7d-4f5b-9c59-7f8f15a0b201"/>
+            <column name="name" value="ADMIN"/>
+        </insert>
+
+        <insert tableName="role">
+            <column name="id" value="d3b55f57-8e11-4b5d-8d6a-8f4b7b6f2c42"/>
+            <column name="name" value="USER"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

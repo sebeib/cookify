@@ -1,0 +1,15 @@
+meta {
+  name: get all users
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/api/user
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: {{authorizationHeader}}
+}
