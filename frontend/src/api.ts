@@ -24,6 +24,26 @@ export async function logout(token: string | null): Promise<void> {
   });
 }
 
+export async function registerWithInvite(
+  token: string,
+  payload: {
+    username: string;
+    password: string;
+    displayName: string;
+  },
+) {
+  return request(`/api/invite/${token}`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export async function checkInvite(token: string): Promise<void> {
+  await request(`/api/invite/${token}`, {
+    method: "GET",
+  });
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const response = await fetch(path, {
     method: options.method ?? "GET",

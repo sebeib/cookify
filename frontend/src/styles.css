@@ -52,6 +52,10 @@ body {
   padding-bottom: 2rem;
 }
 
+.invite-card {
+  width: min(480px, 100%);
+}
+
 .login-wordmark {
   letter-spacing: -0.05em;
   font-size: clamp(2rem, 4vw, 2.9rem);

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShellLayout } from "./layout/AppShellLayout";
 import { RequireAuth } from "./auth/RequireAuth";
 import { DashboardPage } from "./pages/DashboardPage";
+import { InviteRegistrationPage } from "./pages/InviteRegistrationPage";
 import { LoginPage } from "./pages/LoginPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 
@@ -9,6 +10,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/invite/:token" element={<InviteRegistrationPage />} />
       <Route element={<RequireAuth />}>
         <Route element={<AppShellLayout />}>
           <Route index element={<DashboardPage />} />

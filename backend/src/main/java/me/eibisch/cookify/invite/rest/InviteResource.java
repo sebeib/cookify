@@ -3,6 +3,7 @@ package me.eibisch.cookify.invite.rest;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -44,5 +45,12 @@ public class InviteResource {
         return Response.status(Response.Status.CREATED)
                 .entity(createdUser)
                 .build();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response checkInvite(@PathParam("id") UUID inviteId) {
+        inviteRegistrationService.assertInviteExists(inviteId);
+        return Response.noContent().build();
     }
 }

@@ -71,4 +71,9 @@ public class InviteRegistrationService {
 
         return createdUser;
     }
+
+    public void assertInviteExists(UUID inviteId) {
+        inviteRepository.findById(inviteId)
+                .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "Invite %s was not found.".formatted(inviteId)));
+    }
 }

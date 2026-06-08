@@ -72,10 +72,11 @@ public class BearerTokenAuthenticationFilter implements ContainerRequestFilter {
         String path = normalizePath(requestContext);
         String method = requestContext.getMethod();
 
-        return "POST".equals(method) && (
-                "api/auth/login".equals(path)
-                        || path.startsWith("api/invite/")
-        );
+        if ("POST".equals(method) && "api/auth/login".equals(path)) {
+            return true;
+        }
+
+        return ("POST".equals(method) || "GET".equals(method)) && path.startsWith("api/invite/");
     }
 
     private UUID requiredRoleId(ContainerRequestContext requestContext) {
