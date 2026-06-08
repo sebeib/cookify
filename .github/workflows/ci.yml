@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish
+        env:
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          VERSION: ${{ github.ref_name }}
+          IMAGE_NAME: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        run: |
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GH_USERNAME" --password-stdin
+          docker build . --file ./docker/Dockerfile --tag "$IMAGE_NAME"
+          docker push "$IMAGE_NAME"

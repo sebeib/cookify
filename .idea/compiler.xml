@@ -9,5 +9,8 @@
         <module name="cookify-backend" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cookify" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
