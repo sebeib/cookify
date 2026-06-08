@@ -82,7 +82,10 @@ export function AppShellLayout() {
                     to={item.to}
                     className={active ? "shell-nav-link shell-nav-link-active" : "shell-nav-link"}
                   >
-                    {item.label}
+                    <span className="shell-nav-link-inner">
+                      <item.icon size={16} stroke={1.8} />
+                      <span>{item.label}</span>
+                    </span>
                   </UnstyledButton>
                 );
               })}

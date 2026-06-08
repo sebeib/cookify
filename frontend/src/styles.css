@@ -107,6 +107,12 @@ body {
   transition: background-color 140ms ease, color 140ms ease;
 }
 
+.shell-nav-link-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .shell-nav-link:hover {
   background: rgba(244, 248, 243, 0.9);
   color: #324037;
