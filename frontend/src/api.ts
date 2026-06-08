@@ -1,7 +1,8 @@
+import axios, { AxiosError, type Method } from "axios";
 import type { LoginResponse } from "./types";
 
 type RequestOptions = {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: Method;
   body?: unknown;
   token?: string | null;
 };
@@ -9,6 +10,12 @@ type RequestOptions = {
 type ApiErrorPayload = {
   message?: string;
 };
+
+const apiClient = axios.create({
+  headers: {
+    Accept: "application/json",
+  },
+});
 
 export async function login(username: string, password: string): Promise<LoginResponse> {
   return request<LoginResponse>("/api/auth/login", {
@@ -45,37 +52,35 @@ export async function checkInvite(token: string): Promise<void> {
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const response = await fetch(path, {
-    method: options.method ?? "GET",
-    headers: buildHeaders(options),
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
-  });
+  try {
+    const response = await apiClient.request<T>({
+      url: path,
+      method: options.method ?? "GET",
+      headers: buildHeaders(options),
+      data: options.body,
+    });
 
-  if (!response.ok) {
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return response.data;
+  } catch (error) {
     let message = "The request could not be completed.";
 
-    try {
-      const payload = (await response.json()) as ApiErrorPayload;
-      if (payload.message) {
+    if (error instanceof AxiosError) {
+      const payload = error.response?.data as ApiErrorPayload | undefined;
+      if (payload?.message) {
         message = payload.message;
       }
-    } catch {
-      // Ignore JSON parsing errors and keep the default message.
     }
 
     throw new Error(message);
   }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return (await response.json()) as T;
 }
 
-function buildHeaders(options: RequestOptions): HeadersInit {
+function buildHeaders(options: RequestOptions) {
   const headers: Record<string, string> = {
-    Accept: "application/json",
   };
 
   if (options.body !== undefined) {
