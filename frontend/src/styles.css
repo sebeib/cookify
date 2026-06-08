@@ -1,19 +1,22 @@
 :root {
-  color: #17211c;
-  background:
-    radial-gradient(circle at top left, rgba(243, 194, 107, 0.2), transparent 32%),
-    radial-gradient(circle at top right, rgba(78, 145, 122, 0.18), transparent 30%),
-    linear-gradient(180deg, #f7f4ee 0%, #eef4ef 100%);
+  color: #15181b;
+  background: #f4f6f7;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  background: #f4f6f7;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background:
+    linear-gradient(180deg, #f4f6f7 0%, #f9fafb 100%);
 }
 
 #root {
@@ -21,56 +24,195 @@ body {
 }
 
 .eyebrow {
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #4c7765;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #7b8790;
 }
 
 .login-page {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-.hero-panel {
-  min-height: 100%;
-  color: #17211c;
-  background:
-    linear-gradient(135deg, rgba(252, 220, 167, 0.92), rgba(223, 242, 234, 0.92)),
-    #ffffff;
-  border: 1px solid rgba(76, 119, 101, 0.15);
-  box-shadow: 0 24px 60px rgba(23, 33, 28, 0.08);
+.surface-card {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(21, 24, 27, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 23, 28, 0.04);
+  backdrop-filter: blur(10px);
 }
 
-.hero-title {
-  font-size: clamp(2.2rem, 4vw, 4rem);
-  line-height: 0.98;
-  margin-top: 0.5rem;
-  max-width: 10ch;
+.login-card {
+  width: min(440px, 100%);
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
-.hero-copy {
-  margin-top: 1.25rem;
-  max-width: 58ch;
-  color: #31483d;
-  font-size: 1rem;
+.login-wordmark {
+  letter-spacing: -0.05em;
+  font-size: clamp(2rem, 4vw, 2.9rem);
 }
 
-.accent-chip {
-  padding: 0.45rem 0.75rem;
+.shell-header {
+  background: rgba(249, 250, 251, 0.9);
+  border-bottom: 1px solid rgba(21, 24, 27, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.shell-navbar {
+  background: transparent;
+  border-inline-end: 1px solid rgba(21, 24, 27, 0.08);
+}
+
+.shell-frame {
+  width: 100%;
+}
+
+.shell-content {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+.shell-brand {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7c9372;
+}
+
+.shell-main {
+  padding-top: calc(var(--app-shell-header-offset, 0rem) + 0.5rem);
+}
+
+.shell-desktop-nav {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(21, 24, 27, 0.06);
   border-radius: 999px;
-  background: rgba(23, 33, 28, 0.06);
-  color: #1d3328;
-  font-size: 0.88rem;
+  padding: 0.3rem;
+}
+
+.shell-nav-link {
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  color: #607077;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.shell-nav-link:hover {
+  background: rgba(244, 248, 243, 0.9);
+  color: #324037;
+}
+
+.shell-nav-link-active {
+  background: #f4f8f3;
+  color: #324037;
+}
+
+.shell-user-pill {
+  min-height: 40px;
+  padding: 0 0.95rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(21, 24, 27, 0.06);
+}
+
+.shell-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f8f3;
+  color: #5e7056;
   font-weight: 600;
 }
 
-.dashboard-banner {
+.landing-hero {
   background:
-    radial-gradient(circle at top left, rgba(243, 194, 107, 0.2), transparent 30%),
-    linear-gradient(135deg, #ffffff, #f0f7f2);
-  border: 1px solid rgba(76, 119, 101, 0.12);
+    radial-gradient(circle at top right, rgba(212, 226, 205, 0.65), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 248, 243, 0.95) 100%);
+  border: 1px solid rgba(21, 24, 27, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 23, 28, 0.04);
+}
+
+.landing-title {
+  max-width: 12ch;
+  font-size: clamp(2.4rem, 4vw, 4.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.landing-copy {
+  max-width: 56ch;
+  color: #637078;
+  font-size: 1rem;
+}
+
+.section-heading h2 {
+  letter-spacing: -0.03em;
+}
+
+.recipe-card,
+.collection-card,
+.section-card {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(21, 24, 27, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 23, 28, 0.035);
+}
+
+.recipe-cover {
+  aspect-ratio: 1.15 / 1;
+  border-radius: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.recipe-cover-sage {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 28%),
+    linear-gradient(135deg, #dfead9 0%, #f4f8f3 100%);
+}
+
+.recipe-cover-apricot {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 28%),
+    linear-gradient(135deg, #f5e2d1 0%, #fbf4ee 100%);
+}
+
+.recipe-cover-rose {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 28%),
+    linear-gradient(135deg, #f2e2df 0%, #fcf4f2 100%);
+}
+
+.recipe-meta {
+  color: #77828a;
+}
+
+.placeholder-card {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(21, 24, 27, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 23, 28, 0.035);
+}
+
+@media (max-width: 768px) {
+  .login-page {
+    align-items: stretch;
+  }
+
+  .shell-content {
+    padding-top: 1.5rem;
+  }
+
+  .landing-title {
+    max-width: none;
+  }
 }

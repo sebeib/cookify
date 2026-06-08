@@ -8,7 +8,7 @@ type PlaceholderPageProps = {
 
 export function PlaceholderPage({ eyebrow, title, description }: PlaceholderPageProps) {
   return (
-    <Card radius="xl" padding="xl" withBorder>
+    <Card className="placeholder-card" radius="xl" padding="xl">
       <Stack gap="sm">
         <Text c="dimmed" fz="sm" fw={700} tt="uppercase">
           {eyebrow}

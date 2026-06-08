@@ -1,22 +1,46 @@
-import { Badge, Card, Grid, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from "@mantine/core";
-import { IconCompass, IconKey, IconSoup, IconUsers } from "@tabler/icons-react";
+import { Badge, Card, Group, SimpleGrid, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import {
+  IconBookmark,
+  IconClock,
+  IconFlame,
+  IconLeaf,
+  IconSoup,
+  IconSparkles,
+} from "@tabler/icons-react";
 import { useAuth } from "../auth/AuthProvider";
 
-const quickCards = [
+const recipes = [
   {
-    title: "Users area",
-    description: "Authentication and navigation are already wired into the backend session model.",
-    icon: IconUsers,
+    title: "Lemon ricotta pasta",
+    time: "20 min",
+    note: "Bright, soft and weeknight-friendly.",
+    tone: "recipe-cover-sage",
+    icon: IconLeaf,
   },
   {
-    title: "Recipe space",
-    description: "A clean placeholder where the actual cookify product can grow next.",
+    title: "Tomato butter beans",
+    time: "25 min",
+    note: "Comfort food with a pantry-first feel.",
+    tone: "recipe-cover-apricot",
     icon: IconSoup,
   },
   {
-    title: "Session-based auth",
-    description: "Frontend login is connected to the backend session and bearer-token flow.",
-    icon: IconKey,
+    title: "Roasted peach toast",
+    time: "15 min",
+    note: "A small sweet breakfast with little effort.",
+    tone: "recipe-cover-rose",
+    icon: IconSparkles,
+  },
+];
+
+const collections = [
+  {
+    title: "Quick dinners",
+    description: "Simple dishes for evenings when you want something warm without too much planning.",
+  },
+  {
+    title: "Slow weekend cooking",
+    description: "A quieter shelf for baking, simmering and recipes you want to return to.",
   },
 ];
 
@@ -24,69 +48,108 @@ export function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <Stack gap="xl">
-      <Card className="dashboard-banner" padding="xl" radius="xl">
-        <Group justify="space-between" align="flex-start">
+    <Stack gap="xl" py="xl">
+      <Card className="landing-hero" radius="xl" padding="xl">
+        <Stack gap="lg">
           <div>
-            <Text className="eyebrow">Overview</Text>
-            <Title order={1}>Hello, {user?.displayName}</Title>
-            <Text c="dimmed" mt="sm" maw={640}>
-              The initial frontend shell is ready. You can log in, keep the session in local
-              storage, navigate between routes and log out again against the backend API.
+            <Text className="eyebrow">Welcome back</Text>
+            <Title order={1} className="landing-title">
+              Find something good to cook today, {user?.displayName}.
+            </Title>
+            <Text className="landing-copy" mt="md">
+              Cookify is shifting into a calmer recipe space: less control center, more collection,
+              discovery and everyday inspiration.
             </Text>
           </div>
 
-          <Badge color="teal" variant="light" size="lg">
-            Ready for next features
-          </Badge>
-        </Group>
+          <Group gap="sm">
+            <Badge color="sage" variant="light" size="lg">
+              Seasonal picks
+            </Badge>
+            <Badge color="sage" variant="light" size="lg">
+              Everyday cooking
+            </Badge>
+            <Badge color="sage" variant="light" size="lg">
+              Saved for later
+            </Badge>
+          </Group>
+        </Stack>
       </Card>
 
+      <div className="section-heading">
+        <Text className="eyebrow">Featured recipes</Text>
+        <Title order={2}>A few gentle starting points</Title>
+      </div>
+
       <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg">
-        {quickCards.map((card) => (
-          <Card key={card.title} radius="xl" padding="lg" withBorder>
-            <ThemeIcon size={42} radius="md" color="teal" variant="light">
-              <card.icon size={22} />
-            </ThemeIcon>
-            <Title order={4} mt="lg">
-              {card.title}
-            </Title>
-            <Text c="dimmed" mt="sm">
-              {card.description}
+        {recipes.map((recipe) => (
+          <Card key={recipe.title} className="recipe-card" radius="xl" padding="md">
+            <div className={`recipe-cover ${recipe.tone}`}>
+              <ThemeIcon radius="xl" size={44} color="sage" variant="white">
+                <recipe.icon size={22} />
+              </ThemeIcon>
+            </div>
+            <Stack gap="xs" mt="md">
+              <Group justify="space-between" align="flex-start">
+                <Title order={4}>{recipe.title}</Title>
+                <Group gap={4} className="recipe-meta">
+                  <IconClock size={14} />
+                  <Text fz="sm">{recipe.time}</Text>
+                </Group>
+              </Group>
+              <Text c="dimmed">{recipe.note}</Text>
+            </Stack>
+          </Card>
+        ))}
+      </SimpleGrid>
+
+      <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
+        {collections.map((collection) => (
+          <Card key={collection.title} className="collection-card" radius="xl" padding="xl">
+            <Group justify="space-between" align="flex-start" mb="md">
+              <div>
+                <Text className="eyebrow">Collection</Text>
+                <Title order={3} mt="xs">
+                  {collection.title}
+                </Title>
+              </div>
+              <ThemeIcon radius="xl" size={42} color="sage" variant="light">
+                <IconBookmark size={20} />
+              </ThemeIcon>
+            </Group>
+            <Text c="dimmed" maw={460}>
+              {collection.description}
             </Text>
           </Card>
         ))}
       </SimpleGrid>
 
-      <Grid gap="lg">
-        <Grid.Col span={{ base: 12, lg: 7 }}>
-          <Card radius="xl" padding="xl" withBorder>
-            <Group gap="sm" mb="md">
-              <ThemeIcon radius="md" color="moss" variant="light">
-                <IconCompass size={18} />
-              </ThemeIcon>
-              <Title order={3}>Current direction</Title>
-            </Group>
-            <Text c="dimmed">
-              This dashboard is intentionally lightweight. It proves the application frame, so the
-              next steps can focus on actual domain features instead of setup work.
-            </Text>
-          </Card>
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, lg: 5 }}>
-          <Card radius="xl" padding="xl" withBorder>
-            <Text c="dimmed" fz="sm" fw={700} tt="uppercase">
-              Signed in as
-            </Text>
-            <Title order={3} mt="xs">
-              {user?.username}
-            </Title>
-            <Text c="dimmed" mt="sm">
-              Role id: {user?.roleId}
-            </Text>
-          </Card>
-        </Grid.Col>
-      </Grid>
+      <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
+        <Card className="section-card" radius="xl" padding="xl">
+          <Text className="eyebrow">From your kitchen</Text>
+          <Title order={3} mt="xs">
+            Keep the interface soft, keep the product close to cooking.
+          </Title>
+          <Text c="dimmed" mt="md">
+            The authenticated shell is already working against your backend session model. From here
+            we can grow recipe details, collections, search and cooking flows without keeping the
+            admin-dashboard feel.
+          </Text>
+        </Card>
+
+        <Card className="section-card" radius="xl" padding="xl">
+          <Group gap="sm" mb="md">
+            <ThemeIcon radius="xl" size={40} color="sage" variant="light">
+              <IconFlame size={20} />
+            </ThemeIcon>
+            <div>
+              <Text className="eyebrow">Current account</Text>
+              <Title order={3}>{user?.username}</Title>
+            </div>
+          </Group>
+          <Text c="dimmed">Your current session is active and ready for the next product steps.</Text>
+        </Card>
+      </SimpleGrid>
     </Stack>
   );
 }

@@ -13,12 +13,12 @@ export function App() {
         <Route element={<AppShellLayout />}>
           <Route index element={<DashboardPage />} />
           <Route
-            path="/users"
+            path="/discover"
             element={
               <PlaceholderPage
-                eyebrow="User management"
-                title="Users"
-                description="The authenticated shell is ready. The actual user management screens can grow here next."
+                eyebrow="Discover"
+                title="Discover"
+                description="Fresh ideas, seasonal suggestions and curated inspiration can grow into this space next."
               />
             }
           />
@@ -26,19 +26,29 @@ export function App() {
             path="/recipes"
             element={
               <PlaceholderPage
-                eyebrow="Cookbook"
+                eyebrow="Recipes"
                 title="Recipes"
-                description="This area is intentionally empty for now and gives us a clean place to continue with the product."
+                description="This shelf is ready for the actual recipe library, filters and detailed cooking flows."
               />
             }
           />
           <Route
-            path="/settings"
+            path="/saved"
             element={
               <PlaceholderPage
-                eyebrow="Workspace"
-                title="Settings"
-                description="Navigation, auth state and layout are already wired. Settings can plug into this shell later."
+                eyebrow="Saved"
+                title="Saved"
+                description="Bookmarks, personal collections and recently cooked recipes can land here."
+              />
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PlaceholderPage
+                eyebrow="Profile"
+                title="Profile"
+                description="Account details, preferences and your cooking history can plug into this calmer personal area."
               />
             }
           />
