@@ -17,10 +17,12 @@ import {
   IconChefHat,
   IconCompass,
   IconLogout,
+  IconShield,
   IconToolsKitchen2,
   IconUserCircle,
 } from "@tabler/icons-react";
 import { useAuth } from "../auth/AuthProvider";
+import { isAdmin } from "../auth/roles";
 import { CookifyLogo } from "../components/CookifyLogo";
 
 const navigationItems = [
@@ -35,6 +37,10 @@ export function AppShellLayout() {
   const [opened, setOpened] = useState(false);
   const location = useLocation();
   const { logout, user } = useAuth();
+  const isAdminUser = isAdmin(user);
+  const visibleNavigationItems = isAdminUser
+    ? [...navigationItems, { label: "Admin", to: "/admin", icon: IconShield }]
+    : navigationItems;
   const isActive = (path: string) =>
     path === "/" ? location.pathname === path : location.pathname.startsWith(path);
 
@@ -66,7 +72,7 @@ export function AppShellLayout() {
             </Group>
 
             <Group gap="xs" visibleFrom="md" className="shell-desktop-nav">
-              {navigationItems.map((item) => {
+              {visibleNavigationItems.map((item) => {
                 const active = isActive(item.to);
 
                 return (
@@ -104,7 +110,7 @@ export function AppShellLayout() {
       <AppShell.Navbar p="md" className="shell-navbar">
         <Stack justify="space-between" h="100%">
           <Stack gap="xs">
-            {navigationItems.map((item) => (
+            {visibleNavigationItems.map((item) => (
               <Button
                 key={item.to}
                 component={RouterNavLink}

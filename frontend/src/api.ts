@@ -1,5 +1,5 @@
 import axios, { AxiosError, type Method } from "axios";
-import type { LoginResponse } from "./types";
+import type { InviteResponse, LoginResponse } from "./types";
 
 type RequestOptions = {
   method?: Method;
@@ -48,6 +48,17 @@ export async function registerWithInvite(
 export async function checkInvite(token: string): Promise<void> {
   await request(`/api/invite/${token}`, {
     method: "GET",
+  });
+}
+
+export async function createInvite(
+  roleName: "ADMIN" | "USER",
+  token: string | null,
+): Promise<InviteResponse> {
+  return request<InviteResponse>("/api/invite", {
+    method: "POST",
+    body: { roleName },
+    token,
   });
 }
 

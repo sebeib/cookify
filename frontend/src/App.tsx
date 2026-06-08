@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShellLayout } from "./layout/AppShellLayout";
 import { RequireAuth } from "./auth/RequireAuth";
+import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { InviteRegistrationPage } from "./pages/InviteRegistrationPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -14,6 +15,7 @@ export function App() {
       <Route element={<RequireAuth />}>
         <Route element={<AppShellLayout />}>
           <Route index element={<DashboardPage />} />
+          <Route path="/admin" element={<AdminDashboardPage />} />
           <Route
             path="/discover"
             element={

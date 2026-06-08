@@ -10,3 +10,8 @@ export type LoginResponse = {
   sessionId: string;
   user: User;
 };
+
+export type InviteResponse = {
+  id: string;
+  roleId: string;
+};
