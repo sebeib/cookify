@@ -8,6 +8,7 @@ public record UserResponse(
         UUID id,
         String username,
         String displayName,
+        String profileImage,
         Instant created,
         UUID roleId
 ) {
@@ -16,6 +17,7 @@ public record UserResponse(
                 user.id(),
                 user.username(),
                 user.displayName(),
+                user.profileImage(),
                 user.created(),
                 user.roleId()
         );

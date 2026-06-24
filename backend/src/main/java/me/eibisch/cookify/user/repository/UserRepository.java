@@ -24,7 +24,7 @@ public class UserRepository {
 
     public List<User> findAll() {
         return jdbi.withHandle(handle -> handle.createQuery("""
-                        select id, username, password, display_name, created, role_id
+                        select id, username, password, display_name, profile_image, created, role_id
                         from user_account
                         order by username asc
                         """)
@@ -33,6 +33,7 @@ public class UserRepository {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("display_name"),
+                        rs.getString("profile_image"),
                         rs.getObject("created", OffsetDateTime.class).toInstant(),
                         rs.getObject("role_id", UUID.class),
                         ctx))
@@ -41,7 +42,7 @@ public class UserRepository {
 
     public Optional<User> findById(UUID id) {
         return jdbi.withHandle(handle -> handle.createQuery("""
-                        select id, username, password, display_name, created, role_id
+                        select id, username, password, display_name, profile_image, created, role_id
                         from user_account
                         where id = :id
                         """)
@@ -51,6 +52,7 @@ public class UserRepository {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("display_name"),
+                        rs.getString("profile_image"),
                         rs.getObject("created", OffsetDateTime.class).toInstant(),
                         rs.getObject("role_id", UUID.class),
                         ctx))
@@ -59,7 +61,7 @@ public class UserRepository {
 
     public Optional<User> findByUsername(String username) {
         return jdbi.withHandle(handle -> handle.createQuery("""
-                        select id, username, password, display_name, created, role_id
+                        select id, username, password, display_name, profile_image, created, role_id
                         from user_account
                         where username = :username
                         """)
@@ -69,6 +71,7 @@ public class UserRepository {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("display_name"),
+                        rs.getString("profile_image"),
                         rs.getObject("created", OffsetDateTime.class).toInstant(),
                         rs.getObject("role_id", UUID.class),
                         ctx))
@@ -88,19 +91,21 @@ public class UserRepository {
 
     public Optional<User> upsert(User user) {
         return jdbi.withHandle(handle -> handle.createQuery("""
-                        insert into user_account (id, username, password, display_name, created, role_id)
-                        values (:id, :username, :password, :displayName, :created, :roleId)
+                        insert into user_account (id, username, password, display_name, profile_image, created, role_id)
+                        values (:id, :username, :password, :displayName, :profileImage, :created, :roleId)
                         on conflict (id) do update
                         set username = excluded.username,
                             password = excluded.password,
                             display_name = excluded.display_name,
+                            profile_image = excluded.profile_image,
                             role_id = excluded.role_id
-                        returning id, username, password, display_name, created, role_id
+                        returning id, username, password, display_name, profile_image, created, role_id
                         """)
                 .bind("id", user.id())
                 .bind("username", user.username())
                 .bind("password", user.password())
                 .bind("displayName", user.displayName())
+                .bind("profileImage", user.profileImage())
                 .bind("created", OffsetDateTime.ofInstant(user.created(), ZoneOffset.UTC))
                 .bind("roleId", user.roleId())
                 .map((rs, ctx) -> mapUser(
@@ -108,6 +113,7 @@ public class UserRepository {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("display_name"),
+                        rs.getString("profile_image"),
                         rs.getObject("created", OffsetDateTime.class).toInstant(),
                         rs.getObject("role_id", UUID.class),
                         ctx))
@@ -128,10 +134,11 @@ public class UserRepository {
             String username,
             String password,
             String displayName,
+            String profileImage,
             Instant created,
             UUID roleId,
             StatementContext ctx
     ) {
-        return new User(id, username, password, displayName, created, roleId);
+        return new User(id, username, password, displayName, profileImage, created, roleId);
     }
 }

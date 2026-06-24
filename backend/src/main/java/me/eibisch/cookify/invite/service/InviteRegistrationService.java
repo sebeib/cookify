@@ -61,6 +61,7 @@ public class InviteRegistrationService {
                 normalizedUsername,
                 BcryptUtil.bcryptHash(request.password()),
                 normalizedDisplayName,
+                null,
                 Instant.now(),
                 invite.roleId()
         );

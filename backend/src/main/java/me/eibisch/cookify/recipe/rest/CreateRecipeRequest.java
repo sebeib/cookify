@@ -10,6 +10,7 @@ public record CreateRecipeRequest(
         @NotBlank String title,
         String image,
         @NotEmpty List<@Valid CreateRecipeIngredientRequest> ingredients,
+        List<@NotBlank String> tags,
         @NotBlank String description,
         @NotBlank String instructions,
         BigDecimal carbohydrates,

@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -50,6 +51,17 @@ public class RecipeResource {
         return Response.status(Response.Status.CREATED)
                 .entity(recipe)
                 .build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public RecipeResponse updateRecipe(
+            @PathParam("id") UUID id,
+            @Valid CreateRecipeRequest request,
+            @Context ContainerRequestContext requestContext
+    ) {
+        UUID currentUserId = (UUID) requestContext.getProperty("authenticatedUserId");
+        return recipeService.update(id, request, currentUserId);
     }
 
     @POST

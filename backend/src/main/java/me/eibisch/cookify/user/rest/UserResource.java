@@ -9,6 +9,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
@@ -25,6 +27,34 @@ public class UserResource {
     @Inject
     public UserResource(UserService userService) {
         this.userService = userService;
+    }
+
+    @GET
+    @Path("/profile")
+    public UserResponse getProfile(@Context ContainerRequestContext requestContext) {
+        UUID currentUserId = (UUID) requestContext.getProperty("authenticatedUserId");
+        return userService.findProfile(currentUserId);
+    }
+
+    @PUT
+    @Path("/profile")
+    public UserResponse updateProfile(
+            @Valid UpdateProfileRequest request,
+            @Context ContainerRequestContext requestContext
+    ) {
+        UUID currentUserId = (UUID) requestContext.getProperty("authenticatedUserId");
+        return userService.updateProfile(currentUserId, request);
+    }
+
+    @PUT
+    @Path("/profile/password")
+    public Response changePassword(
+            @Valid ChangePasswordRequest request,
+            @Context ContainerRequestContext requestContext
+    ) {
+        UUID currentUserId = (UUID) requestContext.getProperty("authenticatedUserId");
+        userService.changePassword(currentUserId, request);
+        return Response.noContent().build();
     }
 
     @GET

@@ -1,5 +1,5 @@
 import { useDeferredValue, useEffect, useState } from "react";
-import { NavLink as RouterNavLink } from "react-router-dom";
+import { NavLink as RouterNavLink, useSearchParams } from "react-router-dom";
 import {
   Button,
   Card,
@@ -15,20 +15,48 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconChefHat, IconPhoto, IconPlus, IconSearch } from "@tabler/icons-react";
-import { getRecipes } from "../api";
+import { getRecipes, isUnauthorizedError } from "../api";
 import { useAuth } from "../auth/AuthProvider";
+import { UserAvatar } from "../components/UserAvatar";
 import { recipeMacroItems } from "../recipe/macro";
+import { TagBadge } from "../recipe/TagBadge";
 import type { RecipeCard } from "../types";
 
 const dateFormatter = new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" });
 
 export function RecipesPage() {
   const { sessionId } = useAuth();
-  const [query, setQuery] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("query") ?? "");
   const deferredQuery = useDeferredValue(query);
   const [recipes, setRecipes] = useState<RecipeCard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const nextQuery = searchParams.get("query") ?? "";
+    setQuery((currentQuery) => (currentQuery === nextQuery ? currentQuery : nextQuery));
+  }, [searchParams]);
+
+  useEffect(() => {
+    const normalizedQuery = query.trim();
+    const currentQuery = searchParams.get("query") ?? "";
+
+    if (normalizedQuery === currentQuery) {
+      return;
+    }
+
+    if (!normalizedQuery && !currentQuery) {
+      return;
+    }
+
+    if (normalizedQuery) {
+      setSearchParams({ query: normalizedQuery }, { replace: true });
+      return;
+    }
+
+    setSearchParams({}, { replace: true });
+  }, [query, searchParams, setSearchParams]);
 
   useEffect(() => {
     let active = true;
@@ -43,6 +71,10 @@ export function RecipesPage() {
           setRecipes(nextRecipes);
         }
       } catch (error) {
+        if (!active || isUnauthorizedError(error)) {
+          return;
+        }
+
         if (active) {
           setErrorMessage(
             error instanceof Error ? error.message : "Die Rezepte konnten nicht geladen werden.",
@@ -168,11 +200,28 @@ export function RecipesPage() {
 
                 <Stack gap="xs" mt="md">
                   <Title order={4}>{recipe.title}</Title>
-                  <Group gap="xs" className="recipe-tile-meta">
-                    <Text fz="sm">{recipe.authorDisplayName}</Text>
-                    <span>•</span>
-                    <Text fz="sm">{dateFormatter.format(new Date(recipe.created))}</Text>
+                  <Group gap="sm" className="recipe-tile-meta" wrap="nowrap">
+                    <UserAvatar
+                      displayName={recipe.authorDisplayName}
+                      image={recipe.authorProfileImage}
+                      size={28}
+                    />
+                    <div>
+                      <Text fz="sm" fw={600}>{recipe.authorDisplayName}</Text>
+                      <Text fz="xs">{dateFormatter.format(new Date(recipe.created))}</Text>
+                    </div>
                   </Group>
+                  {recipe.tags.length > 0 ? (
+                    <Group gap={6} mt={2}>
+                      {recipe.tags.map((tag) => (
+                        <TagBadge
+                          key={tag.id}
+                          tag={tag}
+                          onClick={() => setQuery(tag.name)}
+                        />
+                      ))}
+                    </Group>
+                  ) : null}
                   <Group gap="xs" mt="xs">
                     {recipeMacroItems.map((macro) => {
                       const value = recipe[macro.key];

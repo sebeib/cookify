@@ -16,6 +16,8 @@ import me.eibisch.cookify.recipe.rest.CreateRecipeIngredientRequest;
 import me.eibisch.cookify.recipe.rest.CreateRecipeRequest;
 import me.eibisch.cookify.recipe.rest.RecipeCardResponse;
 import me.eibisch.cookify.recipe.rest.RecipeResponse;
+import me.eibisch.cookify.tag.domain.Tag;
+import me.eibisch.cookify.tag.service.TagService;
 import me.eibisch.cookify.user.domain.User;
 import me.eibisch.cookify.user.repository.UserRepository;
 
@@ -24,11 +26,13 @@ public class RecipeService {
 
     private final RecipeRepository recipeRepository;
     private final UserRepository userRepository;
+    private final TagService tagService;
 
     @Inject
-    public RecipeService(RecipeRepository recipeRepository, UserRepository userRepository) {
+    public RecipeService(RecipeRepository recipeRepository, UserRepository userRepository, TagService tagService) {
         this.recipeRepository = recipeRepository;
         this.userRepository = userRepository;
+        this.tagService = tagService;
     }
 
     public List<RecipeCardResponse> findAllCards() {
@@ -52,6 +56,50 @@ public class RecipeService {
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new ApiException(Response.Status.UNAUTHORIZED, "The session is invalid."));
 
+        Recipe recipe = mapRecipeRequest(
+                UUID.randomUUID(),
+                request,
+                author.id(),
+                author.displayName(),
+                author.profileImage(),
+                Instant.now()
+        );
+
+        return recipeRepository.create(recipe)
+                .map(RecipeResponse::from)
+                .orElseThrow(() -> new ApiException(Response.Status.INTERNAL_SERVER_ERROR, "Recipe could not be created."));
+    }
+
+    public RecipeResponse update(UUID id, CreateRecipeRequest request, UUID currentUserId) {
+        Recipe existingRecipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "Recipe %s was not found.".formatted(id)));
+
+        if (!existingRecipe.authorId().equals(currentUserId)) {
+            throw new ApiException(Response.Status.FORBIDDEN, "You can only edit your own recipes.");
+        }
+
+        Recipe recipe = mapRecipeRequest(
+                existingRecipe.id(),
+                request,
+                existingRecipe.authorId(),
+                existingRecipe.authorDisplayName(),
+                existingRecipe.authorProfileImage(),
+                existingRecipe.created()
+        );
+
+        return recipeRepository.update(recipe)
+                .map(RecipeResponse::from)
+                .orElseThrow(() -> new ApiException(Response.Status.INTERNAL_SERVER_ERROR, "Recipe could not be updated."));
+    }
+
+    private Recipe mapRecipeRequest(
+            UUID recipeId,
+            CreateRecipeRequest request,
+            UUID authorId,
+            String authorDisplayName,
+            String authorProfileImage,
+            Instant created
+    ) {
         String normalizedTitle = request.title().trim();
         String normalizedDescription = request.description().trim();
         String normalizedInstructions = request.instructions().trim();
@@ -63,26 +111,25 @@ public class RecipeService {
         validateKcal(request.kcal());
 
         List<RecipeIngredient> ingredients = mapIngredients(request.ingredients());
+        List<Tag> tags = tagService.resolveTags(request.tags());
 
-        Recipe recipe = new Recipe(
-                UUID.randomUUID(),
+        return new Recipe(
+                recipeId,
                 normalizedTitle,
                 normalizedImage,
                 ingredients,
+                tags,
                 normalizedDescription,
                 normalizedInstructions,
                 request.carbohydrates(),
                 request.protein(),
                 request.fat(),
                 request.kcal(),
-                author.id(),
-                author.displayName(),
-                Instant.now()
+                authorId,
+                authorDisplayName,
+                authorProfileImage,
+                created
         );
-
-        return recipeRepository.create(recipe)
-                .map(RecipeResponse::from)
-                .orElseThrow(() -> new ApiException(Response.Status.INTERNAL_SERVER_ERROR, "Recipe could not be created."));
     }
 
     private List<RecipeIngredient> mapIngredients(List<CreateRecipeIngredientRequest> ingredients) {

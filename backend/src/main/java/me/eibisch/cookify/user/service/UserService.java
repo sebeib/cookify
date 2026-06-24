@@ -4,7 +4,9 @@ import me.eibisch.cookify.role.RoleRepository;
 import me.eibisch.cookify.api.ApiException;
 import me.eibisch.cookify.user.domain.User;
 import me.eibisch.cookify.user.repository.UserRepository;
+import me.eibisch.cookify.user.rest.ChangePasswordRequest;
 import me.eibisch.cookify.user.rest.UpdateUserRequest;
+import me.eibisch.cookify.user.rest.UpdateProfileRequest;
 import me.eibisch.cookify.user.rest.UserResponse;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -59,12 +61,14 @@ public class UserService {
         String passwordHash = request.password() == null || request.password().isBlank()
                 ? existingUser.password()
                 : BcryptUtil.bcryptHash(request.password());
+        String normalizedProfileImage = normalizeProfileImage(request.profileImage(), existingUser.profileImage());
 
         User updatedUser = new User(
                 id,
                 normalizedUsername,
                 passwordHash,
                 normalizedDisplayName,
+                normalizedProfileImage,
                 existingUser.created(),
                 request.roleId()
         );
@@ -72,6 +76,55 @@ public class UserService {
         return userRepository.upsert(updatedUser)
                 .map(UserResponse::from)
                 .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "User %s was not found.".formatted(id)));
+    }
+
+    public UserResponse findProfile(UUID currentUserId) {
+        return findById(currentUserId);
+    }
+
+    public UserResponse updateProfile(UUID currentUserId, UpdateProfileRequest request) {
+        User existingUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "User %s was not found.".formatted(currentUserId)));
+
+        User updatedUser = new User(
+                existingUser.id(),
+                existingUser.username(),
+                existingUser.password(),
+                request.displayName().trim(),
+                normalizeProfileImage(request.profileImage(), existingUser.profileImage()),
+                existingUser.created(),
+                existingUser.roleId()
+        );
+
+        return userRepository.upsert(updatedUser)
+                .map(UserResponse::from)
+                .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "User %s was not found.".formatted(currentUserId)));
+    }
+
+    public void changePassword(UUID currentUserId, ChangePasswordRequest request) {
+        User existingUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "User %s was not found.".formatted(currentUserId)));
+
+        if (!BcryptUtil.matches(request.currentPassword(), existingUser.password())) {
+            throw new ApiException(Response.Status.BAD_REQUEST, "The current password is incorrect.");
+        }
+
+        if (request.currentPassword().equals(request.newPassword())) {
+            throw new ApiException(Response.Status.BAD_REQUEST, "The new password must be different from the current password.");
+        }
+
+        User updatedUser = new User(
+                existingUser.id(),
+                existingUser.username(),
+                BcryptUtil.bcryptHash(request.newPassword()),
+                existingUser.displayName(),
+                existingUser.profileImage(),
+                existingUser.created(),
+                existingUser.roleId()
+        );
+
+        userRepository.upsert(updatedUser)
+                .orElseThrow(() -> new ApiException(Response.Status.NOT_FOUND, "User %s was not found.".formatted(currentUserId)));
     }
 
     public void delete(UUID id) {
@@ -84,5 +137,14 @@ public class UserService {
         if (password != null && password.isBlank()) {
             throw new ApiException(Response.Status.BAD_REQUEST, "If a password is provided, it must not be blank.");
         }
+    }
+
+    private String normalizeProfileImage(String profileImage, String fallbackValue) {
+        if (profileImage == null) {
+            return fallbackValue;
+        }
+
+        String normalizedProfileImage = profileImage.trim();
+        return normalizedProfileImage.isBlank() ? null : normalizedProfileImage;
     }
 }

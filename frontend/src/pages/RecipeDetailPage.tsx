@@ -14,10 +14,12 @@ import {
   Tooltip,
   Title,
 } from "@mantine/core";
-import { IconArrowLeft, IconPhoto } from "@tabler/icons-react";
-import { getRecipe } from "../api";
+import { IconArrowLeft, IconEdit, IconPhoto } from "@tabler/icons-react";
+import { getRecipe, isUnauthorizedError } from "../api";
 import { useAuth } from "../auth/AuthProvider";
+import { UserAvatar } from "../components/UserAvatar";
 import { recipeMacroItems } from "../recipe/macro";
+import { TagBadge } from "../recipe/TagBadge";
 import { formatRecipeUnit } from "../recipe/units";
 import type { Recipe } from "../types";
 
@@ -25,7 +27,7 @@ const dateFormatter = new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" });
 
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { sessionId } = useAuth();
+  const { sessionId, user } = useAuth();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,6 +49,10 @@ export function RecipeDetailPage() {
           setRecipe(nextRecipe);
         }
       } catch (error) {
+        if (!active || isUnauthorizedError(error)) {
+          return;
+        }
+
         if (active) {
           setErrorMessage(error instanceof Error ? error.message : "Das Rezept konnte nicht geladen werden.");
         }
@@ -102,18 +108,33 @@ export function RecipeDetailPage() {
   const macroItems = recipeMacroItems
     .map((item) => ({ ...item, value: recipe[item.key] }))
     .filter((item) => item.value != null);
+  const isOwnRecipe = recipe.authorId === user?.id;
 
   return (
     <Stack gap="xl" py="xl">
-      <Button
-        component={RouterNavLink}
-        to="/recipes"
-        variant="subtle"
-        color="gray"
-        leftSection={<IconArrowLeft size={16} />}
-      >
-        Zurueck zu den Rezepten
-      </Button>
+      <Group justify="space-between" align="center">
+        <Button
+          component={RouterNavLink}
+          to="/recipes"
+          variant="subtle"
+          color="gray"
+          leftSection={<IconArrowLeft size={16} />}
+        >
+          Zurueck zu den Rezepten
+        </Button>
+
+        {isOwnRecipe ? (
+          <Button
+            component={RouterNavLink}
+            to={`/recipes/${recipe.id}/edit`}
+            variant="light"
+            color="sage"
+            leftSection={<IconEdit size={16} />}
+          >
+            Rezept bearbeiten
+          </Button>
+        ) : null}
+      </Group>
 
       <Card className="section-card recipe-detail-hero" radius="xl" padding="xl">
         <Grid gap="xl" align="center">
@@ -142,11 +163,25 @@ export function RecipeDetailPage() {
                 </Title>
               </div>
 
-              <Group gap="xs" className="recipe-tile-meta">
-                <Text>{recipe.authorDisplayName}</Text>
-                <span>•</span>
-                <Text>{dateFormatter.format(new Date(recipe.created))}</Text>
+              <Group gap="sm" className="recipe-tile-meta" wrap="nowrap">
+                <UserAvatar
+                  displayName={recipe.authorDisplayName}
+                  image={recipe.authorProfileImage}
+                  size={36}
+                />
+                <div>
+                  <Text fw={600}>{recipe.authorDisplayName}</Text>
+                  <Text fz="sm">{dateFormatter.format(new Date(recipe.created))}</Text>
+                </div>
               </Group>
+
+              {recipe.tags.length > 0 ? (
+                <Group gap={6}>
+                  {recipe.tags.map((tag) => (
+                    <TagBadge key={tag.id} tag={tag} />
+                  ))}
+                </Group>
+              ) : null}
 
               <Text c="dimmed" className="recipe-detail-description">
                 {recipe.description}

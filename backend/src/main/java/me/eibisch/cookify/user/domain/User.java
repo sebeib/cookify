@@ -8,6 +8,7 @@ public record User(
         String username,
         String password,
         String displayName,
+        String profileImage,
         Instant created,
         UUID roleId
 ) {

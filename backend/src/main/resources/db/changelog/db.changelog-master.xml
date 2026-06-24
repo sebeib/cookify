@@ -150,4 +150,54 @@
             <column name="instructions" type="text"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="4-create-tag-support" author="codex">
+        <createTable tableName="tag">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="recipe_tag">
+            <column name="recipe_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey
+                tableName="recipe_tag"
+                columnNames="recipe_id, tag_id"
+                constraintName="pk_recipe_tag"/>
+
+        <addForeignKeyConstraint
+                baseTableName="recipe_tag"
+                baseColumnNames="recipe_id"
+                constraintName="fk_recipe_tag_recipe_id"
+                referencedTableName="recipe"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="recipe_tag"
+                baseColumnNames="tag_id"
+                constraintName="fk_recipe_tag_tag_id"
+                referencedTableName="tag"
+                referencedColumnNames="id"/>
+
+        <sql>create unique index ux_tag_name_lower on tag (lower(name));</sql>
+    </changeSet>
+
+    <changeSet id="5-add-user-profile-image" author="codex">
+        <addColumn tableName="user_account">
+            <column name="profile_image" type="text"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -8,6 +8,7 @@ public record UpdateUserRequest(
         @NotBlank String username,
         String password,
         @NotBlank String displayName,
+        String profileImage,
         @NotNull UUID roleId
 ) {
 }

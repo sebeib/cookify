@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { Button, Card, Group, Radio, Stack, Text, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconPlus } from "@tabler/icons-react";
-import { createInvite } from "../api";
+import { createInvite, isUnauthorizedError } from "../api";
 import { useAuth } from "../auth/AuthProvider";
 import { isAdmin } from "../auth/roles";
 
@@ -71,6 +71,10 @@ export function AdminDashboardPage() {
                     message: `Ein neues Einladungstoken fuer ${inviteRoleLabels[inviteRole]} wurde erzeugt.`,
                   });
                 } catch (error) {
+                  if (isUnauthorizedError(error)) {
+                    return;
+                  }
+
                   const message =
                     error instanceof Error ? error.message : "Die Einladung konnte nicht erstellt werden.";
 

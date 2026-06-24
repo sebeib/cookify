@@ -20,6 +20,7 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 import { useAuth } from "../auth/AuthProvider";
+import { UserAvatar } from "../components/UserAvatar";
 import { isAdmin } from "../auth/roles";
 import { CookifyLogo } from "../components/CookifyLogo";
 
@@ -89,6 +90,7 @@ export function AppShellLayout() {
 
             <Group gap="sm" wrap="nowrap">
               <Group gap={0} className="shell-user-pill" visibleFrom="md">
+                <UserAvatar displayName={user?.displayName} image={user?.profileImage} size={32} />
                 <Text fw={600} fz="sm">
                   {user?.displayName}
                 </Text>
@@ -128,7 +130,7 @@ export function AppShellLayout() {
           <div>
             <Divider mb="md" />
             <Group wrap="nowrap">
-              <div className="shell-user-avatar">{user?.displayName.slice(0, 1)}</div>
+              <UserAvatar displayName={user?.displayName} image={user?.profileImage} size={40} />
               <div>
                 <Text fw={600}>{user?.displayName}</Text>
                 <Text c="dimmed" fz="sm">

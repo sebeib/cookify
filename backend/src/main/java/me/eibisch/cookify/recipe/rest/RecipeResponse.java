@@ -5,12 +5,14 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import me.eibisch.cookify.recipe.domain.Recipe;
+import me.eibisch.cookify.tag.rest.TagResponse;
 
 public record RecipeResponse(
         UUID id,
         String title,
         String image,
         List<RecipeIngredientResponse> ingredients,
+        List<TagResponse> tags,
         String description,
         String instructions,
         BigDecimal carbohydrates,
@@ -19,6 +21,7 @@ public record RecipeResponse(
         Integer kcal,
         UUID authorId,
         String authorDisplayName,
+        String authorProfileImage,
         Instant created
 ) {
     public static RecipeResponse from(Recipe recipe) {
@@ -29,6 +32,9 @@ public record RecipeResponse(
                 recipe.ingredients().stream()
                         .map(RecipeIngredientResponse::from)
                         .toList(),
+                recipe.tags().stream()
+                        .map(TagResponse::from)
+                        .toList(),
                 recipe.description(),
                 recipe.instructions(),
                 recipe.carbohydrates(),
@@ -37,6 +43,7 @@ public record RecipeResponse(
                 recipe.kcal(),
                 recipe.authorId(),
                 recipe.authorDisplayName(),
+                recipe.authorProfileImage(),
                 recipe.created()
         );
     }
