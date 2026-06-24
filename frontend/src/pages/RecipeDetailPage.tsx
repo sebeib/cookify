@@ -194,6 +194,18 @@ export function RecipeDetailPage() {
           </List>
         </Stack>
       </Card>
+
+      <Card className="section-card" radius="xl" padding="xl">
+        <Stack gap="md">
+          <div>
+            <Text className="eyebrow">Zubereitung</Text>
+            <Title order={3}>So wird gekocht</Title>
+          </div>
+          <Text className="recipe-instructions">
+            {recipe.instructions}
+          </Text>
+        </Stack>
+      </Card>
     </Stack>
   );
 }

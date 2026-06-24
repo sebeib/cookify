@@ -11,6 +11,7 @@ public record Recipe(
         String image,
         List<RecipeIngredient> ingredients,
         String description,
+        String instructions,
         BigDecimal carbohydrates,
         BigDecimal protein,
         BigDecimal fat,

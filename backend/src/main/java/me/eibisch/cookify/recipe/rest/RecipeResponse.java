@@ -12,6 +12,7 @@ public record RecipeResponse(
         String image,
         List<RecipeIngredientResponse> ingredients,
         String description,
+        String instructions,
         BigDecimal carbohydrates,
         BigDecimal protein,
         BigDecimal fat,
@@ -29,6 +30,7 @@ public record RecipeResponse(
                         .map(RecipeIngredientResponse::from)
                         .toList(),
                 recipe.description(),
+                recipe.instructions(),
                 recipe.carbohydrates(),
                 recipe.protein(),
                 recipe.fat(),

@@ -11,6 +11,7 @@ public record CreateRecipeRequest(
         String image,
         @NotEmpty List<@Valid CreateRecipeIngredientRequest> ingredients,
         @NotBlank String description,
+        @NotBlank String instructions,
         BigDecimal carbohydrates,
         BigDecimal protein,
         BigDecimal fat,

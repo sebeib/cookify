@@ -54,6 +54,7 @@ public class RecipeService {
 
         String normalizedTitle = request.title().trim();
         String normalizedDescription = request.description().trim();
+        String normalizedInstructions = request.instructions().trim();
         String normalizedImage = normalizeImage(request.image());
 
         validatePositive("carbohydrates", request.carbohydrates());
@@ -69,6 +70,7 @@ public class RecipeService {
                 normalizedImage,
                 ingredients,
                 normalizedDescription,
+                normalizedInstructions,
                 request.carbohydrates(),
                 request.protein(),
                 request.fat(),

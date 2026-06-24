@@ -42,6 +42,7 @@ export type Recipe = {
   image: string | null;
   ingredients: RecipeIngredient[];
   description: string;
+  instructions: string;
   carbohydrates: number | null;
   protein: number | null;
   fat: number | null;
@@ -56,8 +57,11 @@ export type CreateRecipePayload = {
   image: string | null;
   ingredients: RecipeIngredient[];
   description: string;
+  instructions: string;
   carbohydrates: number | null;
   protein: number | null;
   fat: number | null;
   kcal: number | null;
 };
+
+export type ImportedRecipe = CreateRecipePayload;

@@ -1,6 +1,7 @@
 import axios, { AxiosError, type Method } from "axios";
 import type {
   CreateRecipePayload,
+  ImportedRecipe,
   InviteResponse,
   LoginResponse,
   Recipe,
@@ -95,6 +96,14 @@ export async function createRecipe(
   return request<Recipe>("/api/recipe", {
     method: "POST",
     body: payload,
+    token,
+  });
+}
+
+export async function importRecipe(url: string, token: string | null): Promise<ImportedRecipe> {
+  return request<ImportedRecipe>("/api/recipe/import", {
+    method: "POST",
+    body: { url },
     token,
   });
 }

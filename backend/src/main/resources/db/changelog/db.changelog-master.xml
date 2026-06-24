@@ -144,4 +144,10 @@
                 referencedTableName="recipe"
                 referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="3-add-recipe-instructions" author="codex">
+        <addColumn tableName="recipe">
+            <column name="instructions" type="text"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

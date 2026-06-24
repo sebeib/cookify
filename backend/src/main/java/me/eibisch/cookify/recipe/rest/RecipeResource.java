@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
+import me.eibisch.cookify.recipe.service.RecipeImportService;
 import me.eibisch.cookify.recipe.service.RecipeService;
 
 @Path("/api/recipe")
@@ -23,10 +24,12 @@ import me.eibisch.cookify.recipe.service.RecipeService;
 public class RecipeResource {
 
     private final RecipeService recipeService;
+    private final RecipeImportService recipeImportService;
 
     @Inject
-    public RecipeResource(RecipeService recipeService) {
+    public RecipeResource(RecipeService recipeService, RecipeImportService recipeImportService) {
         this.recipeService = recipeService;
+        this.recipeImportService = recipeImportService;
     }
 
     @GET
@@ -47,5 +50,11 @@ public class RecipeResource {
         return Response.status(Response.Status.CREATED)
                 .entity(recipe)
                 .build();
+    }
+
+    @POST
+    @Path("/import")
+    public ImportedRecipeResponse importRecipe(@Valid ImportRecipeRequest request) {
+        return recipeImportService.importFromUrl(request.url());
     }
 }

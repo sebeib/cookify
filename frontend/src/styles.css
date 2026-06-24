@@ -269,6 +269,24 @@ body {
   max-width: 980px;
 }
 
+.recipe-import-card {
+  max-width: 980px;
+}
+
+.recipe-import-toolbar {
+  gap: 1rem;
+}
+
+.recipe-import-input {
+  flex: 1 1 420px;
+}
+
+.recipe-import-preview-image {
+  max-width: 420px;
+  aspect-ratio: 1.2 / 1;
+  object-fit: cover;
+}
+
 .recipe-ingredient-row {
   background: rgba(248, 250, 249, 0.88);
   border: 1px solid rgba(21, 24, 27, 0.06);
@@ -292,6 +310,12 @@ body {
   max-width: 58ch;
   font-size: 1rem;
   line-height: 1.7;
+}
+
+.recipe-instructions {
+  white-space: pre-line;
+  line-height: 1.8;
+  color: #334047;
 }
 
 .recipe-macro-card {
@@ -323,6 +347,10 @@ body {
 
   .recipe-page-toolbar {
     align-items: flex-start;
+  }
+
+  .recipe-import-toolbar {
+    align-items: stretch;
   }
 
   .landing-title {

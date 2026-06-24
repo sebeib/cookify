@@ -47,6 +47,7 @@ public class RecipeRepository {
                             :query is null
                             or lower(r.title) like :searchQuery
                             or lower(r.description) like :searchQuery
+                            or lower(coalesce(r.instructions, '')) like :searchQuery
                             or lower(u.display_name) like :searchQuery
                             or exists(
                                 select 1
@@ -64,6 +65,7 @@ public class RecipeRepository {
                         rs.getString("title"),
                         rs.getString("image"),
                         List.of(),
+                        null,
                         null,
                         rs.getBigDecimal("carbohydrates"),
                         rs.getBigDecimal("protein"),
@@ -101,6 +103,7 @@ public class RecipeRepository {
                                 title,
                                 image,
                                 description,
+                                instructions,
                                 carbohydrates,
                                 protein,
                                 fat,
@@ -113,6 +116,7 @@ public class RecipeRepository {
                                 :title,
                                 :image,
                                 :description,
+                                :instructions,
                                 :carbohydrates,
                                 :protein,
                                 :fat,
@@ -125,6 +129,7 @@ public class RecipeRepository {
                     .bind("title", recipe.title())
                     .bind("image", recipe.image())
                     .bind("description", recipe.description())
+                    .bind("instructions", recipe.instructions())
                     .bind("carbohydrates", recipe.carbohydrates())
                     .bind("protein", recipe.protein())
                     .bind("fat", recipe.fat())
@@ -171,6 +176,7 @@ public class RecipeRepository {
                                r.title,
                                r.image,
                                r.description,
+                               r.instructions,
                                r.carbohydrates,
                                r.protein,
                                r.fat,
@@ -189,6 +195,7 @@ public class RecipeRepository {
                         rs.getString("image"),
                         findIngredients(handle, rs.getObject("id", UUID.class)),
                         rs.getString("description"),
+                        rs.getString("instructions"),
                         rs.getBigDecimal("carbohydrates"),
                         rs.getBigDecimal("protein"),
                         rs.getBigDecimal("fat"),
