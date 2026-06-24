@@ -88,4 +88,60 @@
             <column name="name" value="USER"/>
         </insert>
     </changeSet>
+
+    <changeSet id="2-create-recipe" author="codex">
+        <createTable tableName="recipe">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="text"/>
+            <column name="description" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="carbohydrates" type="numeric(10,2)"/>
+            <column name="protein" type="numeric(10,2)"/>
+            <column name="fat" type="numeric(10,2)"/>
+            <column name="kcal" type="integer"/>
+            <column name="author_user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="recipe_ingredient">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="recipe_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="position" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(10,2)"/>
+            <column name="unit" type="text"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="recipe"
+                baseColumnNames="author_user_id"
+                constraintName="fk_recipe_author_user_id"
+                referencedTableName="user_account"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="recipe_ingredient"
+                baseColumnNames="recipe_id"
+                constraintName="fk_recipe_ingredient_recipe_id"
+                referencedTableName="recipe"
+                referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

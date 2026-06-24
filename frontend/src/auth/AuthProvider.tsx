@@ -47,10 +47,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const response = await api.login(username, password);
           handleSuccessfulLogin(response);
         } catch (error) {
-          const message = error instanceof Error ? error.message : "Login failed.";
+          const message = error instanceof Error ? error.message : "Anmeldung fehlgeschlagen.";
           notifications.show({
             color: "red",
-            title: "Login failed",
+            title: "Anmeldung fehlgeschlagen",
             message,
           });
           throw error;
@@ -88,8 +88,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     notifications.show({
       color: "teal",
-      title: "Welcome back",
-      message: `You are signed in as ${response.user.displayName}.`,
+      title: "Willkommen zurueck",
+      message: `Du bist jetzt als ${response.user.displayName} angemeldet.`,
     });
 
     startTransition(() => navigate("/", { replace: true }));

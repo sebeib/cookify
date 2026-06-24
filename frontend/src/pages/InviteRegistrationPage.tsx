@@ -27,15 +27,15 @@ export function InviteRegistrationPage() {
       confirmPassword: "",
     },
     validate: {
-      username: (value) => (value.trim() ? null : "Please enter a username."),
-      displayName: (value) => (value.trim() ? null : "Please enter a display name."),
-      password: (value) => (value.trim() ? null : "Please enter a password."),
+      username: (value) => (value.trim() ? null : "Bitte Benutzernamen eingeben."),
+      displayName: (value) => (value.trim() ? null : "Bitte Anzeigenamen eingeben."),
+      password: (value) => (value.trim() ? null : "Bitte Passwort eingeben."),
       confirmPassword: (value, values) =>
         value.trim()
           ? value === values.password
             ? null
-            : "Passwords do not match."
-          : "Please repeat your password.",
+            : "Die Passwoerter stimmen nicht ueberein."
+          : "Bitte Passwort wiederholen.",
     },
   });
 
@@ -82,17 +82,17 @@ export function InviteRegistrationPage() {
             </Title>
             {inviteState === "checking" && (
               <Text c="dimmed" ta="center" maw={320}>
-                Checking your invite token...
+                Einladungstoken wird geprueft...
               </Text>
             )}
             {inviteState === "valid" && (
               <Text c="dimmed" ta="center" maw={320}>
-                Create your account with the invite you received.
+                Lege dein Konto mit der Einladung an, die du erhalten hast.
               </Text>
             )}
             {inviteState === "invalid" && (
               <Text c="red" ta="center" maw={320}>
-                This invite link is invalid or has already been used.
+                Dieser Einladungslink ist ungueltig oder wurde bereits verwendet.
               </Text>
             )}
           </Stack>
@@ -111,18 +111,18 @@ export function InviteRegistrationPage() {
 
                   notifications.show({
                     color: "sage",
-                    title: "Account created",
-                    message: "Your account is ready. Please sign in.",
+                    title: "Konto erstellt",
+                    message: "Dein Konto ist bereit. Bitte melde dich an.",
                   });
 
                   startTransition(() => navigate("/login", { replace: true }));
                 } catch (error) {
                   const message =
-                    error instanceof Error ? error.message : "Registration could not be completed.";
+                    error instanceof Error ? error.message : "Die Registrierung konnte nicht abgeschlossen werden.";
 
                   notifications.show({
                     color: "red",
-                    title: "Registration failed",
+                    title: "Registrierung fehlgeschlagen",
                     message,
                   });
                 } finally {
@@ -132,7 +132,7 @@ export function InviteRegistrationPage() {
             >
               <Stack gap="md">
                 <TextInput
-                  label="Display name"
+                  label="Anzeigename"
                   placeholder="Jane Doe"
                   size="md"
                   autoComplete="name"
@@ -140,7 +140,7 @@ export function InviteRegistrationPage() {
                 />
 
                 <TextInput
-                  label="Username"
+                  label="Benutzername"
                   placeholder="jane.doe"
                   size="md"
                   autoComplete="username"
@@ -148,16 +148,16 @@ export function InviteRegistrationPage() {
                 />
 
                 <PasswordInput
-                  label="Password"
-                  placeholder="Choose a password"
+                  label="Passwort"
+                  placeholder="Passwort waehlen"
                   size="md"
                   autoComplete="new-password"
                   {...form.getInputProps("password")}
                 />
 
                 <PasswordInput
-                  label="Repeat password"
-                  placeholder="Repeat your password"
+                  label="Passwort wiederholen"
+                  placeholder="Passwort erneut eingeben"
                   size="md"
                   autoComplete="new-password"
                   {...form.getInputProps("confirmPassword")}
@@ -169,7 +169,7 @@ export function InviteRegistrationPage() {
                   loading={isSubmitting}
                   rightSection={<IconArrowRight size={18} />}
                 >
-                  Create account
+                  Konto erstellen
                 </Button>
               </Stack>
             </form>
@@ -177,7 +177,7 @@ export function InviteRegistrationPage() {
 
           {inviteState === "invalid" && (
             <Button variant="light" color="sage" onClick={() => navigate("/login", { replace: true })}>
-              Back to start
+              Zurueck zum Start
             </Button>
           )}
         </Stack>

@@ -13,9 +13,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
-  IconBookmark,
   IconChefHat,
-  IconCompass,
   IconLogout,
   IconShield,
   IconToolsKitchen2,
@@ -26,11 +24,9 @@ import { isAdmin } from "../auth/roles";
 import { CookifyLogo } from "../components/CookifyLogo";
 
 const navigationItems = [
-  { label: "Home", to: "/", icon: IconChefHat },
-  { label: "Discover", to: "/discover", icon: IconCompass },
-  { label: "Recipes", to: "/recipes", icon: IconToolsKitchen2 },
-  { label: "Saved", to: "/saved", icon: IconBookmark },
-  { label: "Profile", to: "/profile", icon: IconUserCircle },
+  { label: "Start", to: "/", icon: IconChefHat },
+  { label: "Rezepte", to: "/recipes", icon: IconToolsKitchen2 },
+  { label: "Profil", to: "/profile", icon: IconUserCircle },
 ];
 
 export function AppShellLayout() {
@@ -39,7 +35,7 @@ export function AppShellLayout() {
   const { logout, user } = useAuth();
   const isAdminUser = isAdmin(user);
   const visibleNavigationItems = isAdminUser
-    ? [...navigationItems, { label: "Admin", to: "/admin", icon: IconShield }]
+    ? [...navigationItems, { label: "Verwaltung", to: "/admin", icon: IconShield }]
     : navigationItems;
   const isActive = (path: string) =>
     path === "/" ? location.pathname === path : location.pathname.startsWith(path);
@@ -66,7 +62,7 @@ export function AppShellLayout() {
                   <Text className="shell-brand" fz="xs" fw={600}>
                     cookify
                   </Text>
-                  <Title order={4}>Recipe collection</Title>
+                  <Title order={4}>Rezeptsammlung</Title>
                 </div>
               </Group>
             </Group>
@@ -103,7 +99,7 @@ export function AppShellLayout() {
                 leftSection={<IconLogout size={16} />}
                 onClick={() => void logout()}
               >
-                Logout
+                Abmelden
               </Button>
             </Group>
           </Group>

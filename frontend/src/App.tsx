@@ -5,7 +5,10 @@ import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { InviteRegistrationPage } from "./pages/InviteRegistrationPage";
 import { LoginPage } from "./pages/LoginPage";
+import { NewRecipePage } from "./pages/NewRecipePage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { RecipeDetailPage } from "./pages/RecipeDetailPage";
+import { RecipesPage } from "./pages/RecipesPage";
 
 export function App() {
   return (
@@ -16,43 +19,16 @@ export function App() {
         <Route element={<AppShellLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
-          <Route
-            path="/discover"
-            element={
-              <PlaceholderPage
-                eyebrow="Discover"
-                title="Discover"
-                description="Fresh ideas, seasonal suggestions and curated inspiration can grow into this space next."
-              />
-            }
-          />
-          <Route
-            path="/recipes"
-            element={
-              <PlaceholderPage
-                eyebrow="Recipes"
-                title="Recipes"
-                description="This shelf is ready for the actual recipe library, filters and detailed cooking flows."
-              />
-            }
-          />
-          <Route
-            path="/saved"
-            element={
-              <PlaceholderPage
-                eyebrow="Saved"
-                title="Saved"
-                description="Bookmarks, personal collections and recently cooked recipes can land here."
-              />
-            }
-          />
+          <Route path="/recipes" element={<RecipesPage />} />
+          <Route path="/recipes/new" element={<NewRecipePage />} />
+          <Route path="/recipes/:id" element={<RecipeDetailPage />} />
           <Route
             path="/profile"
             element={
               <PlaceholderPage
-                eyebrow="Profile"
-                title="Profile"
-                description="Account details, preferences and your cooking history can plug into this calmer personal area."
+                eyebrow="Profil"
+                title="Profil"
+                description="Kontodetails, Vorlieben und deine Kochhistorie koennen in diesen ruhigeren persoenlichen Bereich einfliessen."
               />
             }
           />

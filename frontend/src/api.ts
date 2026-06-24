@@ -1,5 +1,11 @@
 import axios, { AxiosError, type Method } from "axios";
-import type { InviteResponse, LoginResponse } from "./types";
+import type {
+  CreateRecipePayload,
+  InviteResponse,
+  LoginResponse,
+  Recipe,
+  RecipeCard,
+} from "./types";
 
 type RequestOptions = {
   method?: Method;
@@ -62,6 +68,37 @@ export async function createInvite(
   });
 }
 
+export async function getRecipes(token: string | null, query?: string): Promise<RecipeCard[]> {
+  const searchParams = new URLSearchParams();
+
+  if (query && query.trim()) {
+    searchParams.set("query", query.trim());
+  }
+
+  const path = searchParams.size > 0 ? `/api/recipe?${searchParams.toString()}` : "/api/recipe";
+
+  return request<RecipeCard[]>(path, {
+    token,
+  });
+}
+
+export async function getRecipe(id: string, token: string | null): Promise<Recipe> {
+  return request<Recipe>(`/api/recipe/${id}`, {
+    token,
+  });
+}
+
+export async function createRecipe(
+  payload: CreateRecipePayload,
+  token: string | null,
+): Promise<Recipe> {
+  return request<Recipe>("/api/recipe", {
+    method: "POST",
+    body: payload,
+    token,
+  });
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   try {
     const response = await apiClient.request<T>({
@@ -77,7 +114,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
     return response.data;
   } catch (error) {
-    let message = "The request could not be completed.";
+    let message = "Die Anfrage konnte nicht abgeschlossen werden.";
 
     if (error instanceof AxiosError) {
       const payload = error.response?.data as ApiErrorPayload | undefined;

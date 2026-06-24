@@ -19,8 +19,8 @@ export function LoginPage() {
       password: "",
     },
     validate: {
-      username: (value) => (value.trim() ? null : "Please enter your username."),
-      password: (value) => (value.trim() ? null : "Please enter your password."),
+      username: (value) => (value.trim() ? null : "Bitte Benutzernamen eingeben."),
+      password: (value) => (value.trim() ? null : "Bitte Passwort eingeben."),
     },
   });
 
@@ -49,7 +49,7 @@ export function LoginPage() {
 
             <Stack gap="md">
               <TextInput
-                label="Username"
+                label="Benutzername"
                 placeholder="jane.doe"
                 size="md"
                 autoComplete="username"
@@ -57,8 +57,8 @@ export function LoginPage() {
               />
 
               <PasswordInput
-                label="Password"
-                placeholder="Your secure password"
+                label="Passwort"
+                placeholder="Dein Passwort"
                 size="md"
                 autoComplete="current-password"
                 {...form.getInputProps("password")}
@@ -70,7 +70,7 @@ export function LoginPage() {
                 loading={isLoggingIn}
                 rightSection={<IconArrowRight size={18} />}
               >
-                Sign in
+                Anmelden
               </Button>
             </Stack>
           </Stack>
