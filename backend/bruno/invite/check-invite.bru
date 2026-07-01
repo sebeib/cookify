@@ -1,0 +1,11 @@
+meta {
+  name: check invite
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/invite/{{inviteId}}
+  body: none
+  auth: none
+}

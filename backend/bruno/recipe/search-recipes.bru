@@ -1,11 +1,11 @@
 meta {
-  name: get user by id
+  name: search recipes
   type: http
-  seq: 5
+  seq: 2
 }
 
 get {
-  url: {{host}}/api/user/{{userId}}
+  url: {{host}}/api/recipe?query={{tagQuery}}
   body: none
   auth: none
 }

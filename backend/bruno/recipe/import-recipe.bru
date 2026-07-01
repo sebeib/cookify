@@ -1,0 +1,22 @@
+meta {
+  name: import recipe
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{host}}/api/recipe/import
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{authorizationHeader}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "url": "https://www.chefkoch.de/rezepte/1113761217428134/Brauhaus-Gulasch.html"
+  }
+}

@@ -1,0 +1,23 @@
+meta {
+  name: update profile
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{host}}/api/user/profile
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{authorizationHeader}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "displayName": "Sebastian",
+    "profileImage": null
+  }
+}

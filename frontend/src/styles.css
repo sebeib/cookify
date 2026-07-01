@@ -345,6 +345,10 @@ body {
   line-height: 1.7;
 }
 
+.recipe-mode-card .mantine-Group-root {
+  width: 100%;
+}
+
 .recipe-instructions {
   white-space: pre-line;
   line-height: 1.8;
@@ -388,5 +392,9 @@ body {
 
   .landing-title {
     max-width: none;
+  }
+
+  .recipe-mode-card .mantine-Group-root {
+    align-items: flex-start;
   }
 }

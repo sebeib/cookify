@@ -24,4 +24,5 @@ body:json {
 script:post-response {
   bru.setEnvVar("sessionId", res.body.sessionId, { persist: true });
   bru.setEnvVar("authorizationHeader", `Bearer ${res.body.sessionId}`, { persist: true });
+  bru.setEnvVar("userId", res.body.user.id, { persist: true });
 }

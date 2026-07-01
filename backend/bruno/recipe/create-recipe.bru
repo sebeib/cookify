@@ -1,0 +1,49 @@
+meta {
+  name: create recipe
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/api/recipe
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{authorizationHeader}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "title": "Tomatenpasta",
+    "image": null,
+    "ingredients": [
+      {
+        "name": "Pasta",
+        "amount": 250,
+        "unit": "G"
+      },
+      {
+        "name": "Tomaten",
+        "amount": 400,
+        "unit": "G"
+      }
+    ],
+    "tags": [
+      "Pasta",
+      "Schnell"
+    ],
+    "description": "Eine einfache Pastavariante fuer den Alltag.",
+    "instructions": "Pasta kochen.\nSauce zubereiten.\nAlles vermengen.",
+    "carbohydrates": 65.5,
+    "protein": 14.2,
+    "fat": 12.1,
+    "kcal": 520
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("recipeId", res.body.id, { persist: true });
+}

@@ -1,7 +1,7 @@
 meta {
   name: update user
   type: http
-  seq: 4
+  seq: 6
 }
 
 put {
@@ -20,6 +20,7 @@ body:json {
     "username": "jane.doe",
     "password": "new-secret-password",
     "displayName": "Jane Doe",
+    "profileImage": null,
     "roleId": "{{userRoleId}}"
   }
 }

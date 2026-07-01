@@ -1,0 +1,50 @@
+meta {
+  name: update recipe
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{host}}/api/recipe/{{recipeId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{authorizationHeader}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "title": "Tomatenpasta Deluxe",
+    "image": null,
+    "ingredients": [
+      {
+        "name": "Pasta",
+        "amount": 250,
+        "unit": "G"
+      },
+      {
+        "name": "Tomaten",
+        "amount": 400,
+        "unit": "G"
+      },
+      {
+        "name": "Parmesan",
+        "amount": 40,
+        "unit": "G"
+      }
+    ],
+    "tags": [
+      "Pasta",
+      "Feierabend"
+    ],
+    "description": "Eine etwas reichhaltigere Pastavariante.",
+    "instructions": "Pasta kochen.\nSauce zubereiten.\nMit Parmesan servieren.",
+    "carbohydrates": 67.0,
+    "protein": 18.0,
+    "fat": 14.5,
+    "kcal": 560
+  }
+}

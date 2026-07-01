@@ -20,3 +20,7 @@ body:json {
     "roleName": "USER"
   }
 }
+
+script:post-response {
+  bru.setEnvVar("inviteId", res.body.id, { persist: true });
+}

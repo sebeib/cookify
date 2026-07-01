@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MutableRefObject } from "react";
 import { NavLink as RouterNavLink, Navigate, useParams } from "react-router-dom";
 import {
   Button,
@@ -9,12 +9,14 @@ import {
   List,
   SimpleGrid,
   Stack,
+  Switch,
   Text,
   ThemeIcon,
   Tooltip,
   Title,
 } from "@mantine/core";
 import { IconArrowLeft, IconEdit, IconPhoto } from "@tabler/icons-react";
+import NoSleep from "nosleep.js";
 import { getRecipe, isUnauthorizedError } from "../api";
 import { useAuth } from "../auth/AuthProvider";
 import { UserAvatar } from "../components/UserAvatar";
@@ -25,12 +27,29 @@ import type { Recipe } from "../types";
 
 const dateFormatter = new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" });
 
+type WakeLockSentinelLike = {
+  release: () => Promise<void>;
+  addEventListener?: (type: "release", listener: () => void) => void;
+};
+
+type WakeLockNavigator = Navigator & {
+  wakeLock?: {
+    request: (type: "screen") => Promise<WakeLockSentinelLike>;
+  };
+};
+
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { sessionId, user } = useAuth();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isRecipeModeEnabled, setIsRecipeModeEnabled] = useState(false);
+  const [recipeModeError, setRecipeModeError] = useState<string | null>(null);
+  const wakeLockRef = useRef<WakeLockSentinelLike | null>(null);
+  const noSleepRef = useRef<NoSleep | null>(null);
+  const wakeLockSupported =
+    typeof navigator !== "undefined" && "wakeLock" in (navigator as WakeLockNavigator);
 
   useEffect(() => {
     if (!id) {
@@ -67,6 +86,43 @@ export function RecipeDetailPage() {
       active = false;
     };
   }, [id, sessionId]);
+
+  useEffect(() => {
+    return () => {
+      void releaseWakeLock(wakeLockRef);
+      disableNoSleep(noSleepRef);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isRecipeModeEnabled || !wakeLockSupported) {
+      return;
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      if (wakeLockRef.current) {
+        return;
+      }
+
+      void requestWakeLock({
+        wakeLockRef,
+        onError: (message) => {
+          setRecipeModeError(message);
+          setIsRecipeModeEnabled(false);
+        },
+        onSuccess: () => setRecipeModeError(null),
+      });
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isRecipeModeEnabled, wakeLockSupported]);
 
   if (!id) {
     return <Navigate to="/recipes" replace />;
@@ -191,6 +247,70 @@ export function RecipeDetailPage() {
         </Grid>
       </Card>
 
+      <Card className="section-card recipe-mode-card" radius="xl" padding="xl">
+        <Group justify="space-between" align="center" gap="lg">
+          <div>
+            <Text className="eyebrow">Rezeptmodus</Text>
+            <Title order={3}>Display aktiv halten</Title>
+            <Text c="dimmed" mt="xs" maw={620}>
+              Ideal beim Kochen am Handy, damit das Display waehrend der Zubereitung nicht ausgeht.
+            </Text>
+            {recipeModeError ? (
+              <Text c="red" fz="sm" mt="sm">
+                {recipeModeError}
+              </Text>
+            ) : null}
+          </div>
+
+          <Switch
+            size="lg"
+            color="sage"
+            checked={isRecipeModeEnabled}
+            label={isRecipeModeEnabled ? "Aktiv" : "Aus"}
+            onChange={async (event) => {
+              const checked = event.currentTarget.checked;
+
+              if (!checked) {
+                setRecipeModeError(null);
+                setIsRecipeModeEnabled(false);
+                await releaseWakeLock(wakeLockRef);
+                disableNoSleep(noSleepRef);
+                return;
+              }
+
+              setRecipeModeError(null);
+
+              const wakeLockEnabled = wakeLockSupported
+                ? await requestWakeLock({
+                    wakeLockRef,
+                    onError: () => {
+                      // Fallback handled below.
+                    },
+                    onSuccess: () => setRecipeModeError(null),
+                  })
+                : false;
+
+              if (wakeLockEnabled) {
+                setIsRecipeModeEnabled(true);
+                return;
+              }
+
+              const noSleepEnabled = await enableNoSleep(noSleepRef);
+              if (noSleepEnabled) {
+                setIsRecipeModeEnabled(true);
+                setRecipeModeError(null);
+                return;
+              }
+
+              const message =
+                "Der Rezeptmodus konnte auf diesem Geraet leider nicht aktiviert werden.";
+              setRecipeModeError(message);
+              setIsRecipeModeEnabled(false);
+            }}
+          />
+        </Group>
+      </Card>
+
       {macroItems.length > 0 ? (
         <SimpleGrid cols={{ base: 2, md: 4 }} spacing="lg">
           {macroItems.map((item) => (
@@ -243,4 +363,73 @@ export function RecipeDetailPage() {
       </Card>
     </Stack>
   );
+}
+
+async function requestWakeLock({
+  wakeLockRef,
+  onError,
+  onSuccess,
+}: {
+  wakeLockRef: MutableRefObject<WakeLockSentinelLike | null>;
+  onError: (message: string) => void;
+  onSuccess: () => void;
+}) {
+  if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+    return false;
+  }
+
+  try {
+    const wakeLock = await (navigator as WakeLockNavigator).wakeLock?.request("screen");
+    if (!wakeLock) {
+      onError("Der Rezeptmodus wird von diesem Browser nicht unterstuetzt.");
+      return false;
+    }
+
+    wakeLockRef.current = wakeLock;
+    wakeLock.addEventListener?.("release", () => {
+      if (wakeLockRef.current === wakeLock) {
+        wakeLockRef.current = null;
+      }
+    });
+    onSuccess();
+    return true;
+  } catch {
+    onError("Das Display konnte nicht aktiv gehalten werden. Bitte pruefe Browser- und Energiespareinstellungen.");
+    return false;
+  }
+}
+
+async function releaseWakeLock(wakeLockRef: MutableRefObject<WakeLockSentinelLike | null>) {
+  if (!wakeLockRef.current) {
+    return;
+  }
+
+  try {
+    await wakeLockRef.current.release();
+  } catch {
+    // Ignore release errors when the browser already disposed the wake lock.
+  } finally {
+    wakeLockRef.current = null;
+  }
+}
+
+async function enableNoSleep(noSleepRef: MutableRefObject<NoSleep | null>) {
+  try {
+    if (!noSleepRef.current) {
+      noSleepRef.current = new NoSleep();
+    }
+
+    await noSleepRef.current.enable();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function disableNoSleep(noSleepRef: MutableRefObject<NoSleep | null>) {
+  try {
+    noSleepRef.current?.disable();
+  } catch {
+    // Ignore fallback cleanup errors.
+  }
 }
